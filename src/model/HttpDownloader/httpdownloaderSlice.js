@@ -15,8 +15,8 @@ const httpdownloaderSlice = createSlice({
     initialState,
     reducers: {
       fillUrl: (state, url) => { state.url = url },
-      start: state => { state },
-      cancel: state => { state }
+      start: state => { state.state = HttpDownLoaderState[1] },
+      cancel: state => { state.state = HttpDownLoaderState[0] }
     }
   })
 

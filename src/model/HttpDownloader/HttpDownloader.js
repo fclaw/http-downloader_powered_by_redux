@@ -7,19 +7,22 @@ import
     , selectId
     , HttpDownLoaderState
     , fillUrl
+    , start
+    , cancel
   } from './httpdownloaderSlice'
 
 export function HttpDownloader() {
-  const st = useSelector(selectState)
   const dispatch = useDispatch()
+  const ct = useSelector(selectContent)
+  const st = useSelector(selectState)
   return (
     <div>
         <input type="text" onInput={evt => dispatch(fillUrl(evt.target.value))} />
       <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-default" disabled={st == HttpDownLoaderState[1]}>start</button>
-        <button type="button" class="btn btn-default" disabled={st == HttpDownLoaderState[0]}>stop</button>
+        <button type="button" class="btn btn-default" disabled={st == HttpDownLoaderState[1]} onClick={() => dispatch(start())} >start</button>
+        <button type="button" class="btn btn-default" disabled={st == HttpDownLoaderState[0]} onClick={() => dispatch(cancel())}>stop</button>
       </div>
-      <p>{st == HttpDownLoaderState[1] ? "download is in process ..." : useSelector(selectContent)}</p>
+      <p>{st == HttpDownLoaderState[1] ? "download is in process ..." : ct}</p>
     </div>
   )
 }
