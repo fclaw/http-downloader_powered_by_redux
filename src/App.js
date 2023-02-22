@@ -1,11 +1,11 @@
 import './App.css';
-import { Counter } from "./model/Counter/Counter";
+import { HttpDownloader } from "./model/HttpDownloader/HttpDownloader";
 
 function App() {
   return (
     <div className="App">
     HTTP dowloader
-    <Counter />
+    <HttpDownloader />
     </div>
   );
 }
