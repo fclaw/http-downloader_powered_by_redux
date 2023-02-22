@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import './HttpDownLoaderS.css';
 
-const HttpDownLoaderState = ["Idle", "InProgress"];
+export const HttpDownLoaderState = ["Idle", "InProgress"];
 
 const initialState =
  {
@@ -11,14 +10,19 @@ const initialState =
     id: null
  }
 
-
 const httpdownloaderSlice = createSlice({
     name: 'httpdownloader',
     initialState,
-    reducers: {}
+    reducers: {
+      fillUrl: (state, url) => { state.url = url },
+      start: state => { state },
+      cancel: state => { state }
+    }
   })
 
 export default httpdownloaderSlice.reducer
+
+export const { start, cancel, fillUrl } = httpdownloaderSlice.actions
 
 export const selectUrl = state => state.httpdownloader.url
 export const selectState = state => state.httpdownloader.state
