@@ -46,23 +46,28 @@ const httpdownloaderSlice = createSlice({
     },
     extraReducers: builder => {
       builder
-        .addCase(downloadPage.pending, (state, action) => {
-         state.content = null;
-         state.state = HttpDownLoaderState[1];
-        })
-        .addCase(downloadPage.fulfilled, (state, action) => {
-         state.state = HttpDownLoaderState[0];
-         state.content = action.payload;
-        })
-        .addCase(downloadPage.rejected, (state, action) =>
-         {
-            state.content = state.url != null ? "cannot fetch the requested url:" + state.url.payload : null;
-            state.state = HttpDownLoaderState[0];
-         });
+        .addCase(downloadPage.pending, (state, action) => { downloadPagePendingBody(state); })
+        .addCase(downloadPage.fulfilled, (state, action) => { downloadPageFulfilledBody(state); })
+        .addCase(downloadPage.rejected, (state, action) => { downloadPageRejectedBody(state); });
     }
   })
 
 function fillUrlBody(state, url) { state.url = url }
+
+downloadPagePendingBody(state) {
+   state.content = null;
+   state.state = HttpDownLoaderState[1]
+}
+
+downloadPageFulfilledBody(state) {
+   state.state = HttpDownLoaderState[0];
+   state.content = action.payload;
+}
+
+downloadPageRejectedBody(state) {
+   state.content = state.url != null ? "cannot fetch the requested url:" + state.url.payload : null;
+   state.state = HttpDownLoaderState[0];
+}
 
 function cancelBody(state) {
    state.content = null;
