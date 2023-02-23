@@ -47,24 +47,24 @@ const httpdownloaderSlice = createSlice({
     extraReducers: builder => {
       builder
         .addCase(downloadPage.pending, (state, action) => { downloadPagePendingBody(state); })
-        .addCase(downloadPage.fulfilled, (state, action) => { downloadPageFulfilledBody(state); })
+        .addCase(downloadPage.fulfilled, (state, action) => { downloadPageFulfilledBody(state, action.payload); })
         .addCase(downloadPage.rejected, (state, action) => { downloadPageRejectedBody(state); });
     }
   })
 
 function fillUrlBody(state, url) { state.url = url }
 
-downloadPagePendingBody(state) {
+function downloadPagePendingBody(state) {
    state.content = null;
    state.state = HttpDownLoaderState[1]
 }
 
-downloadPageFulfilledBody(state) {
+function downloadPageFulfilledBody(state, page) {
    state.state = HttpDownLoaderState[0];
-   state.content = action.payload;
+   state.content = page;
 }
 
-downloadPageRejectedBody(state) {
+function downloadPageRejectedBody(state) {
    state.content = state.url != null ? "cannot fetch the requested url:" + state.url.payload : null;
    state.state = HttpDownLoaderState[0];
 }
