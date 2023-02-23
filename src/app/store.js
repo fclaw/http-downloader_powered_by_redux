@@ -6,6 +6,6 @@ export default configureStore({
   reducer: {
     //  counter: counterReducer
     httpdownloader: httpdownloaderReducer,
-    // middleware: getDefaultMiddleware
+   // middleware: getDefaultMiddleware
   }
 })
