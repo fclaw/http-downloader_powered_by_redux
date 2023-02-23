@@ -9,12 +9,6 @@ const initialState =
     content: null
  }
 
-async function fetchAsync(url) {
-   let response = await fetch(url);
-   let data = await response.body;
-   return data;
- }
-
 export const downloadPage =
  createAsyncThunk(
   'httpdownloader/start',
