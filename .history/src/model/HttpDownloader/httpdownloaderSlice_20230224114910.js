@@ -50,7 +50,7 @@ export const downloadPage =
    return text;
   })
 
-async function streamToArrayBuffer(stream) {
+async function streamToArrayBuffer(stream: ReadableStream<Uint8Array>): Promise<Uint8Array> {
    let result = new Uint8Array(0);
    const reader = stream.getReader();
    while (true) { // eslint-disable-line no-constant-condition
@@ -90,7 +90,7 @@ const httpdownloaderSlice = createSlice({
         .addCase(downloadPage.rejected, (state, _) => { downloadPageRejectedBody(state); })
         .addCase(cancelPage.pending, (state, _) => { return state; })
         .addCase(cancelPage.fulfilled, (state, _) => { cancelBody(state); })
-        .addCase(cancelPage.rejected, (state, _) => { return state; });
+        .addCase(cancelPage.rejected, (state, action) => { return state; });
     }
   })
 

@@ -50,7 +50,7 @@ export const downloadPage =
    return text;
   })
 
-async function streamToArrayBuffer(stream) {
+async function streamToArrayBuffer(stream): Promise {
    let result = new Uint8Array(0);
    const reader = stream.getReader();
    while (true) { // eslint-disable-line no-constant-condition

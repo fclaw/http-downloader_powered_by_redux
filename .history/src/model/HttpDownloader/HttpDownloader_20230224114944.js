@@ -20,7 +20,7 @@ export function HttpDownloader() {
         <button type="button" class="btn btn-default" disabled={st === HttpDownLoaderState[1]} onClick={() => dispatch(downloadPage())} >start</button>
         <button type="button" class="btn btn-default" disabled={st === HttpDownLoaderState[0]} onClick={() => dispatch(cancelPage())}>stop</button>
       </div>
-      <p>{st === HttpDownLoaderState[1] ? "download is in process ..." : ct}</p>
+      <p>{st == HttpDownLoaderState[1] ? "download is in process ..." : ct}</p>
     </div>
   )
 }
