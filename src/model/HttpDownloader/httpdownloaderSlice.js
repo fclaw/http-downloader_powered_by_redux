@@ -4,7 +4,7 @@ export const HttpDownLoaderState = ["Idle", "InProgress"];
 
 const ABORT_REQUEST_CONTROLLERS = new Map();
 
-function abortAndGetSignal(key) {
+function getSignal(key) {
    const newController = new AbortController();
    ABORT_REQUEST_CONTROLLERS.set(key, newController);
    return newController.signal;
@@ -38,10 +38,13 @@ const initialState =
 export const downloadPage =
  createAsyncThunk(
   'httpdownloader/start',
-  async (data) => {
+  async (_, obj) => {
+   const s = obj.getState();
+   const url = selectUrl(s).payload;
+   const signalKey = selectSignalKey(s)
    // 'https://elm-lang.org/assets/public-opinion.txt'
-   let sig = abortAndGetSignal(data.sigf)
-   const res = await fetch(data.urlf.payload, { signal: sig });
+   const sig = getSignal(signalKey)
+   const res = await fetch(url, { signal: sig });
    const buffer = await streamToArrayBuffer(res.body);
    const text = new TextDecoder().decode(buffer);
    return text;
@@ -67,7 +70,9 @@ async function streamToArrayBuffer(stream: ReadableStream<Uint8Array>): Promise<
 export const cancelPage =
  createAsyncThunk(
    'httpdownloader/cancel',
-   async (signalKey) => {
+   async (_, obj) => {
+      const s = obj.getState();
+      const signalKey = selectSignalKey(s)
       abortRequest(signalKey);
       return  signalKey;
    })
