@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, applyMiddleware } from '@reduxjs/toolkit'
 
 export const HttpDownLoaderState = ["Idle", "InProgress"];
 
