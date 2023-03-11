@@ -20,8 +20,14 @@ in
   pkgs.mkShell {
     buildInputs = [
       nodejs
-      new_spago
+    /*  new_spago
       easy-ps.purs-0_15_7
       easy-ps.psc-package
       easy-ps.purescript-language-server
-      easy-ps.purs-backend-es ];}
+      easy-ps.purs-backend-es */ ];
+      shellHook = ''
+        npm install typescript
+        export PATH="node_modules/typescript/bin:$PATH"
+        echo 'Welcome! You have entered into the nix-shell for `frontend.`'
+      '';
+      }

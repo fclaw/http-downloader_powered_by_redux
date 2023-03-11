@@ -6,20 +6,20 @@ export enum HttpDownloaderState { Idle = 0, Loading };
 
 const ABORT_REQUEST_CONTROLLERS = new Map();
 
-function getSignal(key: string | undefined): AbortSignal {
+function getSignal(key: string | null): AbortSignal {
     const newController = new AbortController();
     ABORT_REQUEST_CONTROLLERS.set(key, newController);
     return newController.signal;
 }
 
-function abortRequest(key: string | undefined): void {
+function abortRequest(key: string | null): void {
     const controller = ABORT_REQUEST_CONTROLLERS.get(key);
     controller.abort();
 }
 
 function signalKeyGen(length: number): string {
     let result = "";
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" as string;
     const charactersLength = characters.length;
     let counter = 0;
     while (counter < length) {
@@ -29,11 +29,11 @@ function signalKeyGen(length: number): string {
     return result;
 }
 
-interface HttpDowloader {
-    url?: string,
+interface HttpDownloader {
+    url: string | null,
     state: HttpDownloaderState,
-    content?: string,
-    signalKey?: string
+    content: string | null,
+    signalKey: string | null
 }
 
 
@@ -56,11 +56,11 @@ async function streamToArrayBuffer(stream: ReadableStream<Uint8Array>)
 }
 
 export const downloadPage =
-    createAsyncThunk<string | undefined, void, { state: RootState }>(
+    createAsyncThunk<string | null, void, { state: RootState }>(
         'httpdownloader/start',
         async (_, state) => {
             const url = selectUrl(state.getState());
-            if (url !== undefined) {
+            if (url !== null) {
                 const signalKey = selectSignalKey(state.getState());
                 // 'https://elm-lang.org/assets/public-opinion.txt'
                 const sig = getSignal(signalKey)
@@ -69,13 +69,13 @@ export const downloadPage =
                     const buffer = await streamToArrayBuffer(res.body);
                     return new TextDecoder().decode(buffer);
                 }
-                else return undefined;
+                else return null;
             }
-            else return undefined;
+            else return null;
         })
 
 export const cancelPage =
-    createAsyncThunk<string | undefined, void, { state: RootState }>(
+    createAsyncThunk<string | null, void, { state: RootState }>(
         'httpdownloader/cancel',
         async (_, obj) => {
             const s = obj.getState();
@@ -85,12 +85,12 @@ export const cancelPage =
         })
 
 
-const initialState: HttpDowloader =
+const initialState: HttpDownloader =
 {
-    url: undefined,
+    url: null,
     state: HttpDownloaderState.Idle,
-    content: undefined,
-    signalKey: undefined
+    content: null,
+    signalKey: null
 }
 
 export const httpdownloaderSlice =
@@ -98,12 +98,7 @@ export const httpdownloaderSlice =
         name: 'httpdownloader',
         initialState,
         reducers: {
-            fillUrl:
-                (state, url) => {
-                    state.url = url.payload;
-                    const key = signalKeyGen(20);
-                    state.signalKey = key;
-                }
+            fillUrl: fillUrlBody
         },
         extraReducers: builder => {
             builder
@@ -116,24 +111,30 @@ export const httpdownloaderSlice =
         }
     })
 
-function downloadPagePendingBody(state: WritableDraft<HttpDowloader>): void {
-    state.content = undefined;
+function downloadPagePendingBody(state: WritableDraft<HttpDownloader>): void {
+    state.content = null;
     state.state = HttpDownloaderState.Loading
 }
 
-function downloadPageFulfilledBody(state: WritableDraft<HttpDowloader>, page: string | undefined) {
+function downloadPageFulfilledBody(state: WritableDraft<HttpDownloader>, page: string | null) {
     state.state = HttpDownloaderState.Idle;
     state.content = page;
 }
 
-function downloadPageRejectedBody(state: WritableDraft<HttpDowloader>) {
-    state.content = state.content !== undefined ? "cannot fetch the requested url:" + state.url : undefined;
+function downloadPageRejectedBody(state: WritableDraft<HttpDownloader>) {
+    state.content = state.content !== null? "cannot fetch the requested url:" + state.url : null;
     state.state = HttpDownloaderState.Idle;
 }
 
-function cancelBody(state: WritableDraft<HttpDowloader>) {
-    state.content = undefined;
+function cancelBody(state: WritableDraft<HttpDownloader>) {
+    state.content = null;
     state.state = HttpDownloaderState.Idle;
+}
+
+function fillUrlBody(state: WritableDraft<HttpDownloader>, url: { payload: string; }) {
+    state.url = url.payload;
+    const key = signalKeyGen(20);
+    state.signalKey = key;
 }
 
 export default httpdownloaderSlice.reducer
